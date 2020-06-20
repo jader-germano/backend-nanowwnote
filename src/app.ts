@@ -1,4 +1,8 @@
-import express from 'express';
+import express, {
+    NextFunction,
+    Request,
+    Response
+} from 'express';
 import mongoose from "mongoose";
 import * as bodyParser from 'body-parser';
 import { errors } from 'celebrate';
@@ -19,22 +23,23 @@ class App {
     }
 
     private config(): void {
-        /**
-         * support application/json type post data
-         */
         this.app.use(bodyParser.json());
-        /**
-         *  support application/x-www-form-urlencoded post data
-         */
         this.app.use(bodyParser.urlencoded({ extended: false }));
-        /**
-         *  support application/x-www-form-urlencoded post data
-         */
         this.app.use(errors());
+        this.app.use(App.logRequests);
         this.app.use(cors({
             // TODO: define cors origin when domain gets done
             /*  origin: 'www'*/
         }));
+    }
+
+    private static logRequests(request: Request, response: Response, next: NextFunction) {
+        const { method, url } = request;
+
+        const logLabel = `[${method.toUpperCase()} ${url}]`;
+        console.time(logLabel);
+        next();
+        console.timeEnd(logLabel);
     }
 
     private async mongoSetup() {
@@ -45,7 +50,6 @@ class App {
         };
         mongoose.Promise = global.Promise;
         await mongoose.connect(this.mongoUrl, mongoConfig);
-
     }
 }
 

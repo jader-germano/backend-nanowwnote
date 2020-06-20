@@ -11,6 +11,7 @@ export class NoteController {
     public async index(request: Request, response: Response) {
         try {
             const { page } = request.query;
+            console.log(page);
             const notes = await Note.paginate({}, {
                 page: Number(page)
             });

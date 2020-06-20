@@ -1,8 +1,9 @@
-import * as mongoose from 'mongoose';
+import mongoose from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate';
 
 const Schema = mongoose.Schema;
 
-export const NoteSchema = new Schema( {
+export const NoteSchema = new Schema({
     title: {
         type: String,
         required: true,
@@ -16,3 +17,4 @@ export const NoteSchema = new Schema( {
         default: Date.now,
     }
 });
+NoteSchema.plugin(mongoosePaginate);
