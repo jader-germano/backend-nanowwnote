@@ -6,7 +6,8 @@
   "author": "jadergermano <jader.germano@icloud.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "yarn ts-node src/server.ts"
+    "dev": "yarn ts-node src/server.ts",
+    "devLR": "yarn ts-node-dev src/server.ts"
   },
   "devDependencies": {
     "@types/express": "^4.17.6",
