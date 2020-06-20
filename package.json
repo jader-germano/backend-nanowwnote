@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "yarn ts-node src/server.ts",
-    "devLR": "yarn ts-node-dev src/server.ts"
+    "devLR": "nodemon src/server.ts"
   },
   "devDependencies": {
     "@types/express": "^4.17.6",
@@ -19,6 +19,7 @@
     "@types/cors": "^2.8.6",
     "celebrate": "^12.1.1",
     "cors": "^2.8.5",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "nodemon": "^2.0.4"
   }
 }
