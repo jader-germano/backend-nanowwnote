@@ -1,16 +1,6 @@
-import express from 'express';
-import { errors } from 'celebrate';
-import cors from 'cors';
-import routes from './routes'
+import app from "./app";
+const PORT = 3335;
 
-const app = express();
-
-app.use(cors({
-    // TODO: define cors origin when domain gets done
-    /*  origin: 'www'*/
-}));
-app.use(express.json());
-app.use(errors());
-app.use(routes);
-
-app.listen(3335);
+app.listen(PORT, () => {
+    console.log('Express server listening on port ' + PORT);
+})
