@@ -27,7 +27,6 @@ class App {
         this.app.use(bodyParser.urlencoded({ extended: false }));
         this.app.use(errors());
         this.app.use(App.logRequests);
-        this.app.use(this.validateRepositoryId)
         this.app.use(cors({
             // TODO: define cors origin when domain gets done
             origin: 'www.localhost'
@@ -41,15 +40,6 @@ class App {
         console.time(logLabel);
         next();
         console.timeEnd(logLabel);
-    }
-
-    private validateRepositoryId(request: Request, response: Response, next: NextFunction) {
-        console.log(request.query.key);
-        if (request.query.key !== '80119d2dc53e77684a0c857048f659de7425dc9f') {
-            response.status(401).send('You shall not pass!');
-        } else {
-           next();
-        }
     }
 
     private async mongoSetup() {
