@@ -11,7 +11,7 @@ import cors from 'cors';
 import { Routes } from './routes/routes'
 
 class App {
-    public app: express.Application;
+    public  app: express.Application;
     public route: Routes = new Routes();
     public mongoUrl: string = 'mongodb://localhost:27017/nanowwnote';
 

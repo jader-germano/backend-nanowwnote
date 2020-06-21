@@ -1,11 +1,12 @@
-import { describe, it, expect} from '@jest/globals';
+import { describe, expect, it, } from '@jest/globals';
 
 import request from 'supertest';
 import app from '../app';
 
+
 describe("Notes", () => {
   it("should be able to create a new note", async () => {
-    const response = await request(app.route)
+    const response = await request(app)
       .post("/notes")
       .send({
         title: "Umbriel",
@@ -21,13 +22,13 @@ describe("Notes", () => {
   });
 
   it("should be able to list the notes", async () => {
-    const note = await request(app.route)
+    const note = await request(app)
       .post("/notes")
       .send({
         title: "Umbriel",
       });
 
-    const response = await request(app.route).get("/notes");
+    const response = await request(app).get("/notes");
 
     expect(response.body).toEqual(
       expect.arrayContaining([
@@ -41,14 +42,14 @@ describe("Notes", () => {
   });
 
   it("should be able to update note", async () => {
-    const note = await request(app.route)
+    const note = await request(app)
       .post("/notes")
       .send({
         title: "Umbriel",
         description: 'Workspace jobs'
       });
 
-    const response = await request(app.route)
+    const response = await request(app)
       .put(`/notes/${note.body.id}`)
       .send({
         title: "Unform",
@@ -64,18 +65,18 @@ describe("Notes", () => {
   });
 
   it("should not be able to update a note that does not exist", async () => {
-    await request(app.route).put(`/notes/123`).expect(400);
+    await request(app).put(`/notes/123`).expect(400);
   });
 
   it("should not be able to update note likes manually", async () => {
-    const note = await request(app.route)
+    const note = await request(app)
       .post("/notes")
       .send({
         title: "Umbriel",
         description: 'Workspace jobs'
       });
 
-    const response = await request(app.route)
+    const response = await request(app)
       .put(`/notes/${note.body.id}`)
       .send({
         likes: 15
@@ -86,24 +87,24 @@ describe("Notes", () => {
     });
   });
 
-  it("should be able to delete the note", async () => {
-    const response = await request(app.route)
+      it("should be able to delete the note", async () => {
+    const response = await request(app)
       .post("/notes")
       .send({
         title: "Umbriel",
         techs: ["Node", "Express", "TypeScript"]
       });
 
-    await request(app.route).delete(`/notes/${response.body.id}`).expect(204);
+    await request(app).delete(`/notes/${response.body.id}`).expect(204);
 
-    const notes = await request(app.route).get("/notes");
+    const notes = await request(app).get("/notes");
 
-    const note = notes.body.find((r) => r.id === response.body.id);
+    const note = notes.body.find((r: { id: any }) => r.id === response.body.id);
 
     expect(note).toBe(undefined);
   });
 
   it("should not be able to delete a note that does not exist", async () => {
-    await request(app.route).delete(`/notes/123`).expect(400);
+    await request(app).delete(`/notes/123`).expect(400);
   });
 });
