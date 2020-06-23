@@ -1,43 +1,41 @@
-import mongoose from 'mongoose';
-import { NoteSchema } from '../../models/note/Note'
 import {
     Request,
-    Response
-} from "express";
+    Response,
+} from 'express';
+import Note from '../../models/note/Note';
+import NoteRepository from '../../repositories/NoteRepository';
 
-const Note = mongoose.model('Note', NoteSchema);
+
+const noteRepository = new NoteRepository();
 
 export class NoteController {
     public async index(request: Request, response: Response) {
         try {
             const { page } = request.query;
-            console.log(page);
-            const notes = await Note.paginate({}, {
-                page: Number(page)
-            });
-            return response.json(notes);
+
+            return response.json(noteRepository.findAll(Number(page)));
         } catch (e) {
-            response.send(e);
+            return response.status(404).json({error: e});
         }
     }
 
     public async find(request: Request, response: Response) {
         try {
             let { id } = request.params;
-            const note = await Note.findById(id);
-            return response.json(note);
+
+            return response.json(noteRepository.find(id));
         } catch (e) {
-            return response.send(e);
+            return response.status(404).json({error: e})
         }
     }
 
     public async create(request: Request, response: Response) {
         try {
             let newNote = new Note(request.body);
-            const note = await Note.create(newNote);
-            return response.json(note);
+
+            return response.json(await noteRepository.create(newNote));
         } catch (e) {
-            return response.send(e);
+            return response.status(404).json({error: e})
         }
     }
 
@@ -45,12 +43,10 @@ export class NoteController {
         try {
             let { id } = request.params;
             let updatedNote = new Note(request.body);
-            const note = await Note.findByIdAndUpdate(id, updatedNote, {
-                new: true
-            });
-            return response.json(note);
+
+            return response.json(await noteRepository.update(id, updatedNote));
         } catch (e) {
-            return response.send(e);
+            return response.status(404).json({error: e})
         }
 
     }
@@ -58,10 +54,10 @@ export class NoteController {
     public async remove(request: Request, response: Response) {
         try {
             let { id } = request.params;
-            await Note.findByIdAndRemove(id);
-            return response.json(true);
+
+            return response.json(await noteRepository.remove(id));
         } catch (e) {
-            return response.send(e);
+            return response.status(404).json({error: e})
         }
 
     }

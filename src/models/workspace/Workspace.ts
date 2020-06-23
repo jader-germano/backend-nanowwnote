@@ -1,18 +1,17 @@
-import * as mongoose from 'mongoose';
+export default class Workspace {
+    _id: string;
 
-const Schema = mongoose.Schema;
+    title: string;
 
-export const WorkspaceSchema = new Schema( {
-    title: {
-        type: String,
-        required: true,
-    },
-    description: {
-        type: String,
-        required: true,
-    },
-    created_date: {
-        type: Date,
-        default: Date.now,
+    description:string ;
+
+    created_date: Date;
+
+    constructor(note: Workspace) {
+        this._id = note._id;
+        this.title = note.title;
+        this.description = note.description;
+        this.created_date = note.created_date;
+
     }
-});
+}

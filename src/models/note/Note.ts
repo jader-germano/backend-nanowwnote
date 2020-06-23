@@ -1,20 +1,17 @@
-import mongoose from 'mongoose';
-import mongoosePaginate from 'mongoose-paginate';
+export default class Note {
+    _id: string;
 
-const Schema = mongoose.Schema;
+    title: string;
 
-export const NoteSchema = new Schema({
-    title: {
-        type: String,
-        required: true,
-    },
-    description: {
-        type: String,
-        required: true,
-    },
-    created_date: {
-        type: Date,
-        default: Date.now,
+    description:string ;
+
+    created_date: Date;
+
+    constructor(note: Note) {
+        this._id = note._id;
+        this.title = note.title;
+        this.description = note.description;
+        this.created_date = note.created_date;
+
     }
-});
-NoteSchema.plugin(mongoosePaginate);
+}

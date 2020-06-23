@@ -1,42 +1,39 @@
-import mongoose from 'mongoose';
-import { WorkspaceSchema } from '../../models/workspace/Workspace'
 import {
     Request,
-    Response
-} from "express";
+    Response,
+} from 'express';
+import Workspace from '../../models/workspace/Workspace';
+import WorkspaceRepository from '../../repositories/WorkspaceRepository';
 
-const Workspace = mongoose.model('Woorkspace', WorkspaceSchema);
+
+const noteRepository = new WorkspaceRepository();
 
 export class WorkspaceController {
     public async index(request: Request, response: Response) {
         try {
-            const { page } = request.query;
-            const workspaces = await Workspace.paginate({}, {
-                page: Number(page)
-            });
-            return response.json(workspaces);
+            return response.json(noteRepository.findAll());
         } catch (e) {
-            response.send(e);
+            response.status(404).json({error: e})
         }
     }
 
     public async find(request: Request, response: Response) {
         try {
             let { id } = request.params;
-            const workspace = await Workspace.findById(id);
-            return response.json(workspace);
+
+            return response.json(noteRepository.find(id));
         } catch (e) {
-            return response.send(e);
+            return response.status(404).json({error: e})
         }
     }
 
     public async create(request: Request, response: Response) {
         try {
             let newWorkspace = new Workspace(request.body);
-            const workspace = await Workspace.create(newWorkspace);
-            return response.json(workspace);
+
+            return response.json(await noteRepository.create(newWorkspace));
         } catch (e) {
-            return response.send(e);
+            return response.status(404).json({error: e})
         }
     }
 
@@ -44,12 +41,10 @@ export class WorkspaceController {
         try {
             let { id } = request.params;
             let updatedWorkspace = new Workspace(request.body);
-            const workspace = await Workspace.findByIdAndUpdate(id, updatedWorkspace, {
-                new: true
-            });
-            return response.json(workspace);
+
+            return response.json(await noteRepository.update(id, updatedWorkspace));
         } catch (e) {
-            return response.send(e);
+            return response.status(404).json({error: e})
         }
 
     }
@@ -57,10 +52,10 @@ export class WorkspaceController {
     public async remove(request: Request, response: Response) {
         try {
             let { id } = request.params;
-            await Workspace.findByIdAndRemove(id);
-            return response.json(true);
+
+            return response.json(await noteRepository.remove(id));
         } catch (e) {
-            return response.send(e);
+            return response.status(404).json({error: e})
         }
 
     }
