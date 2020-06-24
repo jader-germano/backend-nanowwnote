@@ -2,31 +2,55 @@ import mongoose from 'mongoose';
 import Note from '../models/note/Note';
 import { NoteSchema } from '../models/note/NoteSchema';
 
-const NoteMongo = mongoose.model('Note', NoteSchema);
+interface NoteDTO {
+    _id: string;
+
+    title: string;
+
+    description: string;
+
+}
+
+const noteMongo = mongoose.model('Notes', NoteSchema);
 
 export default class NoteRepository {
     public async findAll(page: number) {
-        return await NoteMongo.paginate({}, {
+        return await noteMongo.paginate({}, {
             page: page,
         });
     }
 
-    public async find(id: string) {
-        return NoteMongo.findById(id);
+    public find(id: string) {
+        return noteMongo.findById(id);
     }
 
-    public async create(note: Note) {
-        return await NoteMongo.create(note);
+    public async create({ _id, title, description }: NoteDTO) {
+        const note = new Note({
+            _id,
+            title,
+            description,
+        });
+        return await noteMongo.create(note);
     }
 
-    public async update(id: string, note: Note) {
-        return NoteMongo.findByIdAndUpdate(id, note, {
+    public update(id: string, { title, description }: Omit<NoteDTO, '_id'>) {
+        return noteMongo.findByIdAndUpdate(id, {
+            title,
+            description,
+        }, {
             new: true,
         });
     }
 
     public async remove(id: string) {
-        await NoteMongo.findByIdAndRemove(id)
-        return true;
+        const toRemove = await this.find(id);
+        if (toRemove === null) {
+            throw Error(`Note with id '${id}' not found.`);
+        }
+        return noteMongo.findByIdAndRemove(id).then(() => {
+            return true;
+        });
+
+
     }
 }

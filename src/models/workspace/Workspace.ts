@@ -3,15 +3,11 @@ export default class Workspace {
 
     title: string;
 
-    description:string ;
+    description: string;
 
-    created_date: Date;
-
-    constructor(note: Workspace) {
-        this._id = note._id;
-        this.title = note.title;
-        this.description = note.description;
-        this.created_date = note.created_date;
-
+    constructor({ _id, title, description }: Workspace) {
+        this._id = _id;
+        this.title = title;
+        this.description = description;
     }
 }

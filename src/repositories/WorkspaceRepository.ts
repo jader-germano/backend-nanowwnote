@@ -2,29 +2,53 @@ import mongoose from 'mongoose';
 import Workspace from '../models/workspace/Workspace';
 import { WorkspaceSchema } from '../models/workspace/WorkspaceSchema';
 
-const WorkspaceMongo = mongoose.model('Workspace', WorkspaceSchema);
+interface WorkspaceDTO {
+    _id: string;
+
+    title: string;
+
+    description: string;
+
+}
+
+const workspaceMongo = mongoose.model('Workspaces', WorkspaceSchema);
 
 export default class WorkspaceRepository {
     public async findAll() {
-        return await WorkspaceMongo.paginate({}, {});
+        return await workspaceMongo.paginate({}, {});
     }
 
     public async find(id: string) {
-        return WorkspaceMongo.findById(id);
+        return workspaceMongo.findById(id);
     }
 
-    public async create(workspace: Workspace) {
-        return await WorkspaceMongo.create(workspace);
+    public async create({ _id, title, description }: WorkspaceDTO) {
+        const workspace = new Workspace({
+            _id,
+            title,
+            description,
+        });
+
+        return await workspaceMongo.create(workspace);
     }
 
-    public async update(id: string, workspace: Workspace) {
-        return WorkspaceMongo.findByIdAndUpdate(id, workspace, {
+    public async update(id: string, { title, description }:  Omit<WorkspaceDTO, '_id'>) {
+        return workspaceMongo.findByIdAndUpdate(id, {
+            title,
+            description,
+        }, {
             new: true,
         });
     }
 
     public async remove(id: string) {
-        await WorkspaceMongo.findByIdAndRemove(id)
-        return true;
+        const toRemove = await this.find(id);
+        if (toRemove === null) {
+            throw Error(`Note with id '${id}' not found.`);
+        }
+        return workspaceMongo.findByIdAndRemove(id).then(() => {
+            return true;
+        });
+
     }
 }

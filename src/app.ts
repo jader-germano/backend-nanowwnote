@@ -1,17 +1,16 @@
+import { errors } from 'celebrate';
+import cors from 'cors';
 import express, {
     NextFunction,
     Request,
-    Response
+    Response,
 } from 'express';
-import mongoose from "mongoose";
-import * as bodyParser from 'body-parser';
-import { errors } from 'celebrate';
-import cors from 'cors';
+import mongoose from 'mongoose';
 
-import { Routes } from './routes/routes'
+import { Routes } from './routes/routes';
 
 class App {
-    public  app: express.Application;
+    public app: express.Application;
     public route: Routes = new Routes();
     public mongoUrl: string = 'mongodb://localhost:27017/nanowwnote';
 
@@ -23,13 +22,12 @@ class App {
     }
 
     private config(): void {
-        this.app.use(bodyParser.json());
-        this.app.use(bodyParser.urlencoded({ extended: false }));
+        this.app.use(express.json());
         this.app.use(errors());
         this.app.use(App.logRequests);
         this.app.use(cors({
             // TODO: define cors origin when domain gets done
-            origin: 'www.localhost'
+            origin: 'www.localhost',
         }));
     }
 
@@ -44,12 +42,13 @@ class App {
 
     private async mongoSetup() {
         const mongoConfig = {
-            autoIndex: true,
+            autoIndex: false,
+            useFindAndModify: false,
             useNewUrlParser: true,
-            useUnifiedTopology: true
+            useUnifiedTopology: true,
         };
-        mongoose.Promise = global.Promise;
         await mongoose.connect(this.mongoUrl, mongoConfig);
+        mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
     }
 }
 
