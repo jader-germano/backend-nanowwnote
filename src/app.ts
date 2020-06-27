@@ -5,20 +5,17 @@ import express, {
     Request,
     Response,
 } from 'express';
-import mongoose from 'mongoose';
 
 import { Routes } from './routes/routes';
 
 class App {
     public app: express.Application;
     public route: Routes = new Routes();
-    public mongoUrl: string = 'mongodb://localhost:27017/nanowwnote';
 
     constructor() {
         this.app = express();
         this.config();
         this.route.routes(this.app);
-        this.mongoSetup().then();
     }
 
     private config(): void {
@@ -40,16 +37,6 @@ class App {
         console.timeEnd(logLabel);
     }
 
-    private async mongoSetup() {
-        const mongoConfig = {
-            autoIndex: false,
-            useFindAndModify: false,
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        };
-        await mongoose.connect(this.mongoUrl, mongoConfig);
-        mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
-    }
 }
 
 export default new App().app;

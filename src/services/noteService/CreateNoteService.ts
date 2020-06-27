@@ -1,26 +1,28 @@
+import { getCustomRepository } from 'typeorm';
 import NoteRepository from '../../repositories/NoteRepository';
 
 interface Request {
-    _id: string;
+    id: string;
 
     title: string;
 
     description: string;
 
+    date: Date;
+
 }
 
 export default class CreateNoteService {
-    private noteRepository = new NoteRepository();
 
-    constructor(noteRepository: NoteRepository) {
-        this.noteRepository = noteRepository;
-    }
-
-    public async execute({ _id, title, description }: Request) {
-        return await this.noteRepository.create({
-            _id,
+    public async execute({ id, title, description, date }: Request) {
+        const noteRepository = getCustomRepository(
+            NoteRepository,
+        );
+        return await noteRepository.saveNote({
+            id,
             title,
             description,
+            date
         });
     }
 }

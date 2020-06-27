@@ -1,5 +1,6 @@
+import 'reflect-metadata';
 import app from './app';
-
+import './database';
 import https from 'https';
 import fs from 'fs';
 
@@ -12,5 +13,5 @@ const httpOptions = {
 };
 
 https.createServer(httpOptions, app).listen(PORT,() => {
-    console.log('Express server listening on port ' + PORT);
+    console.log(`Server started on port ${PORT}`);
 });

@@ -1,24 +1,25 @@
+import { getCustomRepository } from 'typeorm';
 import WorkspaceRepository from '../../repositories/WorkspaceRepository';
 
 interface Request {
+    id: string;
 
     title: string;
 
-    description: string;
+    date: Date;
 
 }
 
-export default class UpdateNoteService {
-    private workspaceRepository = new WorkspaceRepository();
+export default class UpdateWorkspaceService {
 
-    constructor(workspaceRepository: WorkspaceRepository) {
-        this.workspaceRepository = workspaceRepository;
-    }
-
-    public async execute(id: string, { title, description }: Request) {
-        return await this.workspaceRepository.update(id, {
+    public async execute({ id, title, date }: Request) {
+        const workspaceRepository = getCustomRepository(
+            WorkspaceRepository,
+        );
+        return await workspaceRepository.saveWorkspace({
+            id,
             title,
-            description,
+            date
         });
     }
 }

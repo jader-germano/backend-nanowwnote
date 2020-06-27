@@ -1,56 +1,47 @@
-import mongoose from 'mongoose';
-import Note from '../models/note/Note';
-import { NoteSchema } from '../models/note/NoteSchema';
+import {
+    DeleteResult,
+    EntityRepository,
+    Repository,
+} from 'typeorm';
+import Note from '../models/Note';
 
-interface NoteDTO {
-    _id: string;
+@EntityRepository(Note)
+export default class NoteRepository extends Repository<Note> {
 
-    title: string;
+    public async findAllNotes(page: number): Promise<Note[] | null> {
+        return await this.find() || null;
+    }
 
-    description: string;
+    public async findNoteByDate(id: string): Promise<Note | null> {
+        const findNote = await this.findOne({
+            where: { id },
+        });
+        return findNote || null;
+    }
 
-}
-
-const noteMongo = mongoose.model('Notes', NoteSchema);
-
-export default class NoteRepository {
-    public async findAll(page: number) {
-        return await noteMongo.paginate({}, {
-            page: page,
+    public async findNoteById(id: string) {
+        return await this.findOne({
+            where: { id },
         });
     }
 
-    public find(id: string) {
-        return noteMongo.findById(id);
-    }
-
-    public async create({ _id, title, description }: NoteDTO) {
-        const note = new Note({
-            _id,
+    public async saveNote({ id, title, description, date }: Note): Promise<Note | null> {
+        const note = await this.create({
+            id,
             title,
             description,
+            date,
         });
-        return await noteMongo.create(note);
+        return await this.save(note);
     }
 
-    public update(id: string, { title, description }: Omit<NoteDTO, '_id'>) {
-        return noteMongo.findByIdAndUpdate(id, {
-            title,
-            description,
-        }, {
-            new: true,
+    public async removeNote(id: string): Promise<DeleteResult> {
+        const toRemove = await this.findOne({
+            where: { id },
         });
-    }
-
-    public async remove(id: string) {
-        const toRemove = await this.find(id);
         if (toRemove === null) {
             throw Error(`Note with id '${id}' not found.`);
         }
-        return noteMongo.findByIdAndRemove(id).then(() => {
-            return true;
-        });
-
-
+        return await this.delete(id)
     }
 }

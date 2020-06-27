@@ -1,54 +1,39 @@
-import mongoose from 'mongoose';
-import Workspace from '../models/workspace/Workspace';
-import { WorkspaceSchema } from '../models/workspace/WorkspaceSchema';
+import {
+    DeleteResult,
+    EntityRepository,
+    Repository,
+} from 'typeorm';
+import Workspace from '../models/Workspace';
 
-interface WorkspaceDTO {
-    _id: string;
+@EntityRepository(Workspace)
+export default class WorkspaceRepository extends Repository<Workspace> {
 
-    title: string;
-
-    description: string;
-
-}
-
-const workspaceMongo = mongoose.model('Workspaces', WorkspaceSchema);
-
-export default class WorkspaceRepository {
-    public async findAll() {
-        return await workspaceMongo.paginate({}, {});
+    public async findAllWorkspaces(): Promise<Workspace[] | null> {
+        return await this.find();
     }
 
-    public async find(id: string) {
-        return workspaceMongo.findById(id);
+    public async findWorkspaceById(id: string): Promise<Workspace | null>  {
+        const  workspace = await this.findOne({
+            where: { id },
+        });
+        return workspace|| null;
     }
 
-    public async create({ _id, title, description }: WorkspaceDTO) {
-        const workspace = new Workspace({
-            _id,
+    public async saveWorkspace({ id, title, date }: Workspace) {
+        const workspace = this.create({
+            id,
             title,
-            description,
+            date,
         });
 
-        return await workspaceMongo.create(workspace);
+        return await this.save(workspace);
     }
 
-    public async update(id: string, { title, description }:  Omit<WorkspaceDTO, '_id'>) {
-        return workspaceMongo.findByIdAndUpdate(id, {
-            title,
-            description,
-        }, {
-            new: true,
-        });
-    }
-
-    public async remove(id: string) {
-        const toRemove = await this.find(id);
+    public async removeWorkspace(id: string): Promise<DeleteResult> {
+        const toRemove = await this.find({ id });
         if (toRemove === null) {
             throw Error(`Note with id '${id}' not found.`);
         }
-        return workspaceMongo.findByIdAndRemove(id).then(() => {
-            return true;
-        });
-
+        return await this.delete(id);
     }
 }

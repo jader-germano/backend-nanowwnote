@@ -8,11 +8,11 @@ export class NoteRoutes {
     public routes(app: express.Application): void {
         app.route('/note').
         get(noteController.index)
-        .post(noteController.create);
+        .post(noteController.create)
+        .put(noteController.update);
 
         app.route('/note/:id')
         .get(noteController.find)
-        .put(noteController.update)
         .delete(noteController.remove);
     }
 }

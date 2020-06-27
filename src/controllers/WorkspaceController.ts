@@ -2,17 +2,18 @@ import {
     Request,
     Response,
 } from 'express';
-import Workspace from '../models/workspace/Workspace';
+import { getCustomRepository } from 'typeorm';
 import WorkspaceRepository from '../repositories/WorkspaceRepository';
 import UpdateWorkspaceService from '../services/workspaceService/UpdateWorkspaceService';
 import CreateWorkspaceService from '../services/workspaceService/CreateWorkspaceService';
 
-const workspaceRepository = new WorkspaceRepository();
+
 
 export default class WorkspaceController {
     public async index(request: Request, response: Response) {
         try {
-            return response.json(await workspaceRepository.findAll());
+            const workspaceRepository = getCustomRepository(WorkspaceRepository);
+            return response.json(await workspaceRepository.findAllWorkspaces());
         } catch (e) {
             return response.status(404).json({error: e.message});
         }
@@ -20,8 +21,9 @@ export default class WorkspaceController {
 
     public async find(request: Request, response: Response) {
         try {
+            const workspaceRepository = getCustomRepository(WorkspaceRepository);
             const { id } = request.params;
-            const workspace = await workspaceRepository.find(id);
+            const workspace = await workspaceRepository.findWorkspaceById(id);
             if (workspace === null) return response.json({ message: 'Not match found.' });
             return response.json(workspace);
         } catch (e) {
@@ -31,11 +33,9 @@ export default class WorkspaceController {
 
     public async create(request: Request, response: Response) {
         try {
-            const createWorkspaceService = new CreateWorkspaceService(
-                workspaceRepository,
-            )
-
-            return response.json(await createWorkspaceService.execute(new Workspace(request.body)));
+            const createWorkspaceService = new CreateWorkspaceService();
+            const { id, title, date } = request.body
+            return response.json(await createWorkspaceService.execute({ id, title, date }));
         } catch (e) {
             return response.status(404).json({error: e.message});
         }
@@ -43,13 +43,11 @@ export default class WorkspaceController {
 
     public async update(request: Request, response: Response) {
         try {
-            const updateWorkspaceService = new UpdateWorkspaceService(
-                workspaceRepository,
-            );
+            const updateWorkspaceService = new UpdateWorkspaceService();
 
-            const { id } = request.params;
+            const { id, title, date } = request.body
 
-            const updateNote = await updateWorkspaceService.execute(id, new Workspace(request.body));
+            const updateNote = await updateWorkspaceService.execute({ id, title, date });
 
             if (updateNote === null) return response.json({ message: 'No match found.' });
 
@@ -62,9 +60,10 @@ export default class WorkspaceController {
 
     public async remove(request: Request, response: Response) {
         try {
+            const workspaceRepository = getCustomRepository(WorkspaceRepository);
             const { id } = request.params;
 
-            const removed = await workspaceRepository.remove(id);
+            const removed = await workspaceRepository.removeWorkspace(id);
 
             return response.json({
                 message: `Successfully deleted: ${removed}`,
