@@ -1,15 +1,10 @@
-import {
-    DeleteResult,
-    EntityRepository,
-    Repository,
-} from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 import Note from '../models/Note';
 
 @EntityRepository(Note)
-export default class NoteRepository extends Repository<Note> {
-
+export default class NotesRepository extends Repository<Note> {
     public async findAllNotes(page: number): Promise<Note[] | null> {
-        return await this.find() || null;
+        return (await this.find()) || null;
     }
 
     public async findNoteByDate(id: string): Promise<Note | null> {
@@ -25,23 +20,30 @@ export default class NoteRepository extends Repository<Note> {
         });
     }
 
-    public async saveNote({ id, title, description, date }: Note): Promise<Note | null> {
-        const note = await this.create({
+    public async saveNote({
+        id,
+        title,
+        description,
+        owner_id,
+        ownerWorkSpace_id,
+    }: Note): Promise<Note | null> {
+        return await this.save({
             id,
             title,
             description,
-            date,
+            owner_id,
+            ownerWorkSpace_id,
         });
-        return await this.save(note);
     }
 
-    public async removeNote(id: string): Promise<DeleteResult> {
+    public async removeNote(id: string): Promise<boolean> {
         const toRemove = await this.findOne({
             where: { id },
         });
         if (toRemove === null) {
             throw Error(`Note with id '${id}' not found.`);
         }
-        return await this.delete(id)
+        await this.delete(id);
+        return true;
     }
 }
