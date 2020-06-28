@@ -1,6 +1,7 @@
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm';
 
-export class AlterTypeNoteIdToUuid1593227446651 implements MigrationInterface {
+export default class AlterTypeNoteIdToUuid1593227446651
+    implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.dropColumn('notes', 'date');
 

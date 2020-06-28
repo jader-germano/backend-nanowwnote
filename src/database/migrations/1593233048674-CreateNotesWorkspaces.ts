@@ -5,7 +5,8 @@ import {
     TableForeignKey,
 } from 'typeorm';
 
-export class CreateNotesWorkspaces1593233048674 implements MigrationInterface {
+export default class CreateNotesWorkspaces1593233048674
+    implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(
             new Table({
