@@ -9,22 +9,18 @@ const noteRouter = Router();
 
 noteRouter.use(ensureAuthenticated);
 
-noteRouter.route('/notes')
-.get( async (request: Request, response: Response) => {
-    try {
+noteRouter
+    .route('/')
+    .get(async (request: Request, response: Response) => {
         const { page } = request.query;
 
-        const notes = await getCustomRepository(
-            NotesRepository,
-        ).findAllNotes(Number(page));
+        const notes = await getCustomRepository(NotesRepository).findAllNotes(
+            Number(page),
+        );
 
         return response.json(notes);
-    } catch (e) {
-        response.status(404).json({ error: e.message });
-    }
-})
-.post(async (request: Request, response: Response) => {
-    try {
+    })
+    .post(async (request: Request, response: Response) => {
         const createNoteService = new CreateNoteService();
 
         const {
@@ -41,12 +37,8 @@ noteRouter.route('/notes')
             ownerWorkSpace_id,
         });
         return response.json(note);
-    } catch (e) {
-        response.status(404).json({ error: e.message });
-    }
-})
-.put(async (request: Request, response: Response) => {
-    try {
+    })
+    .put(async (request: Request, response: Response) => {
         const updateNoteService = new UpdateNoteService();
         const {
             id,
@@ -67,41 +59,30 @@ noteRouter.route('/notes')
             return response.json({ message: 'No match found.' });
 
         return response.json(updateNote);
-    } catch (e) {
-        return response.status(404).json({ error: e.message });
-    }
-});
+    });
 
-noteRouter.route('/notes/:id')
-.get( async (request: Request, response: Response) => {
-    try {
+noteRouter
+    .route('/:id')
+    .get(async (request: Request, response: Response) => {
         const { id } = request.params;
-        const note = await getCustomRepository(
-            NotesRepository,
-        ).findNoteById(id);
+        const note = await getCustomRepository(NotesRepository).findNoteById(
+            id,
+        );
         if (!note) return response.json({ message: 'No match found.' });
         return response.json(note);
-    } catch (e) {
-        response.status(404).json({ error: e.message });
-    }
-})
-.delete( async (request: Request, response: Response) =>{
-    try {
+    })
+    .delete(async (request: Request, response: Response) => {
         const { id } = request.params;
 
-        const removed = await getCustomRepository(
-            NotesRepository,
-        ).removeNote(id);
+        const removed = await getCustomRepository(NotesRepository).removeNote(
+            id,
+        );
 
         const removedStatus = {
             message: `Successfully deleted: ${removed}`,
             response: `${removed}`,
         };
         return response.json(removedStatus);
-    } catch (e) {
-        return response.status(404).json({ error: e.message });
-    }
-
     });
 
 export default noteRouter;

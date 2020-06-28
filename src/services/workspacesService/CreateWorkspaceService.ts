@@ -13,10 +13,11 @@ export default class CreateWorkspaceService {
         owner_id,
     }: Request): Promise<Workspace | null> {
         const workspaceRepository = getCustomRepository(WorkspacesRepository);
-        const workspace = workspaceRepository.create({
+        let workspace = workspaceRepository.create({
             title,
             owner_id,
         });
-        return await workspaceRepository.saveWorkspace(workspace);
+        workspace = await workspaceRepository.saveWorkspace(workspace);
+        return workspace;
     }
 }

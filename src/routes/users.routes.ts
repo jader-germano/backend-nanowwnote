@@ -1,29 +1,28 @@
 import { Request, Response, Router } from 'express';
+import multer from 'multer';
 import { getCustomRepository } from 'typeorm';
+import uploadConfig from '../config/upload';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import UsersRepository from '../repositories/UsersRepository';
 import CreateUserService from '../services/usersService/CreateUserService';
+import UpdateAvatarUserService from '../services/usersService/UpdateAvatarUserService';
 import UpdateUsersService from '../services/usersService/UpdateUserService';
 
 const usersRouter = Router();
 
-usersRouter.use(ensureAuthenticated);
-
-usersRouter.route('/users')
-.get(async (request: Request, response: Response) => {
-    try {
+const upload = multer(uploadConfig);
+usersRouter
+    .route('/')
+    .get(async (request: Request, response: Response) => {
         const workspaceRepository = getCustomRepository(UsersRepository);
         const { page } = request.query;
 
         const users = await workspaceRepository.findAllUsers(Number(page));
 
         return response.json(users);
-    } catch (e) {
-        response.status(404).json({ error: e.message });
-    }
-})
-.post(async (request: Request, response: Response) => {
-    try {
+    })
+
+    .post(async (request: Request, response: Response) => {
         const createUsersService = new CreateUserService();
 
         const { name, email, password } = request.body;
@@ -35,12 +34,9 @@ usersRouter.route('/users')
         });
 
         return response.json(user);
-    } catch (e) {
-        response.status(404).json({ error: e.message });
-    }
-})
-.put(async (request: Request, response: Response) => {
-    try {
+    })
+
+    .put(async (request: Request, response: Response) => {
         const updateUsersService = new UpdateUsersService();
 
         const { id, name, email, password } = request.body;
@@ -52,18 +48,14 @@ usersRouter.route('/users')
             password,
         });
 
-        if (!updateUsers)
-            return response.json({ message: 'No match found.' });
+        if (!updateUsers) return response.json({ message: 'No match found.' });
 
         return response.json(updateUsers);
-    } catch (e) {
-        return response.status(404).json({ error: e.message });
-    }
-});
+    });
 
-usersRouter.route('/users/:id')
-.get(async (request: Request, response: Response) => {
-    try {
+usersRouter
+    .route('/:id')
+    .get(async (request: Request, response: Response) => {
         const workspaceRepository = getCustomRepository(UsersRepository);
 
         const { id } = request.params;
@@ -73,13 +65,9 @@ usersRouter.route('/users/:id')
         if (!user) return response.json({ message: 'No match found.' });
 
         return response.json(user);
-    } catch (e) {
-        response.status(404).json({ error: e.message });
-    }
-})
+    })
 
-.delete(async (request: Request, response: Response) => {
-    try {
+    .delete(async (request: Request, response: Response) => {
         const workspaceRepository = getCustomRepository(UsersRepository);
 
         const { id } = request.params;
@@ -91,10 +79,21 @@ usersRouter.route('/users/:id')
             response: `${removed}`,
         };
         return response.json(removedStatus);
-    } catch (e) {
-        return response.status(404).json({ error: e.message });
-    }
-});
+    });
+usersRouter
+    .route('/avatar')
+    .patch(
+        ensureAuthenticated,
+        upload.single('avatar'),
+        async (request, response) => {
+            const updateAvatarUserService = new UpdateAvatarUserService();
+
+            const users = await updateAvatarUserService.execute({
+                user_id: request.user.id,
+                avatarFileName: request.file.filename,
+            });
+            return response.json(users);
+        },
+    );
 
 export default usersRouter;
-

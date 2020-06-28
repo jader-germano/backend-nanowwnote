@@ -9,21 +9,15 @@ const workspacesRouter = Router();
 
 workspacesRouter.use(ensureAuthenticated);
 
-workspacesRouter.route('/workspaces/')
-.get(async (request: Request, response: Response) => {
-    try {
-        const workspaceRepository = getCustomRepository(
-            WorkspacesRepository,
-        );
+workspacesRouter
+    .route('/')
+    .get(async (request: Request, response: Response) => {
+        const workspaceRepository = getCustomRepository(WorkspacesRepository);
         const workspaces = await workspaceRepository.findAllWorkspaces();
 
         return response.json(workspaces);
-    } catch (e) {
-        return response.status(404).json({ error: e.message });
-    }
-})
-.post(async (request: Request, response: Response) => {
-    try {
+    })
+    .post(async (request: Request, response: Response) => {
         const createWorkspaceService = new CreateWorkspaceService();
 
         const { title, owner_id } = request.body;
@@ -34,12 +28,8 @@ workspacesRouter.route('/workspaces/')
         });
 
         return response.json(workspace);
-    } catch (e) {
-        return response.status(404).json({ error: e.message });
-    }
-})
-.put(async (request: Request, response: Response) => {
-    try {
+    })
+    .put(async (request: Request, response: Response) => {
         const updateWorkspaceService = new UpdateWorkspaceService();
 
         const { id, title, owner_id } = request.body;
@@ -50,34 +40,25 @@ workspacesRouter.route('/workspaces/')
             owner_id,
         });
 
-        if (updateNote === null)
-            return response.json({ message: 'No match found.' });
+        if (!updateNote) return response.json({ message: 'No match found.' });
 
         return response.json(updateNote);
-    } catch (e) {
-        return response.status(404).json({ error: e.message });
-    }
-});
+    });
 
-workspacesRouter.route('/workspaces/:id')
-.get( async (request: Request, response: Response) => {
-    try {
+workspacesRouter
+    .route('/:id')
+    .get(async (request: Request, response: Response) => {
         const { id } = request.params;
 
         const workspace = await getCustomRepository(
             WorkspacesRepository,
         ).findWorkspaceById(id);
 
-        if (workspace === null)
-            return response.json({ message: 'Not match found.' });
+        if (!workspace) return response.json({ message: 'Not match found.' });
 
         return response.json(workspace);
-    } catch (e) {
-        return response.status(404).json({ error: e.message });
-    }
-})
-.delete( async (request: Request, response: Response) => {
-    try {
+    })
+    .delete(async (request: Request, response: Response) => {
         const { id } = request.params;
 
         const removed = await getCustomRepository(
@@ -89,9 +70,6 @@ workspacesRouter.route('/workspaces/:id')
             response: `${removed}`,
         };
         return response.json(removedStatus);
-    } catch (e) {
-        return response.status(404).json({ error: e.message });
-    }
-});
+    });
 
 export default workspacesRouter;

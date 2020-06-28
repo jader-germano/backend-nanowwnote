@@ -21,13 +21,13 @@ export default class CreateNoteService {
     }: Request): Promise<Note | null> {
         const noteRepository = getCustomRepository(NotesRepository);
 
-        const note = await noteRepository.create({
+        let note = await noteRepository.create({
             title,
             description,
             owner_id,
             ownerWorkSpace_id,
         });
-
-        return await noteRepository.saveNote(note);
+        note = await noteRepository.saveNote(note);
+        return note;
     }
 }

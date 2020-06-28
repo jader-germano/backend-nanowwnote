@@ -2,8 +2,9 @@
 
 # compiled output
 /dist
-/tmp
 /out-tsc
+tmp/*
+!tmp/*.gitkeep
 # Only exists if Bazel was run
 /bazel-out
 
