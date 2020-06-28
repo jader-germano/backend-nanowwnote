@@ -9,17 +9,14 @@ interface Request {
 }
 
 export default class UpdateWorkspaceService {
-    public async execute({
-        id,
-        title,
-        owner_id,
-    }: Request): Promise<Workspace | null> {
+    public async execute({ id, title, owner_id }: Request): Promise<Workspace> {
         const workspaceRepository = getCustomRepository(WorkspacesRepository);
-        const workspace = workspaceRepository.create({
+        let workspace = workspaceRepository.create({
             id,
             title,
             owner_id,
         });
-        return await workspaceRepository.saveWorkspace(workspace);
+        workspace = await workspaceRepository.saveWorkspace(workspace);
+        return workspace;
     }
 }

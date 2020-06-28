@@ -1,4 +1,5 @@
 import { getCustomRepository } from 'typeorm';
+import AppError from '../../errors/AppError';
 import User from '../../models/User';
 import UsersRepository from '../../repositories/UsersRepository';
 
@@ -20,20 +21,22 @@ export default class CreateUsersService {
         password,
     }: Request): Promise<User | null> {
         const usersRepository = getCustomRepository(UsersRepository);
-        let checkUsersExists = await usersRepository.find({
+
+        const checkUsersExists = await usersRepository.find({
             where: { id, email },
         });
 
         if (checkUsersExists.length > 1) {
-            throw Error('Email address already in use.');
+            throw new AppError('Email address already in use.', 401);
         }
-        const user = usersRepository.create({
+
+        let user = usersRepository.create({
             id,
             name,
             email,
             password,
         });
-
-        return await usersRepository.saveUser(user);
+        user = await usersRepository.saveUser(user);
+        return user;
     }
 }

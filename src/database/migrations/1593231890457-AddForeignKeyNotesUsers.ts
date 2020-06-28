@@ -5,7 +5,7 @@ import {
     TableForeignKey,
 } from 'typeorm';
 
-export class AddForeignKeyNotesUsers1593231890457
+export default class AddForeignKeyNotesUsers1593231890457
     implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.addColumn(

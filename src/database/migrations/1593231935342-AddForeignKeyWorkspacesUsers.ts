@@ -5,7 +5,7 @@ import {
     TableForeignKey,
 } from 'typeorm';
 
-export class AddForeignKeyWorkspacesUsers1593231935342
+export default class AddForeignKeyWorkspacesUsers1593231935342
     implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.addColumn(

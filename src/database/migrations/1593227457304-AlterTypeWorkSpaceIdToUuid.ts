@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm';
 
-export class AlterTypeWorkSpaceIdToUuid1593227457304
+export default class AlterTypeWorkSpaceIdToUuid1593227457304
     implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.dropColumn('workspaces', 'date');
