@@ -6,20 +6,20 @@ import express, {
     Response,
 } from 'express';
 
-import { Routes } from './routes/routes';
+import routes from './routes/routes';
 
 class App {
     public app: express.Application;
-    public route: Routes = new Routes();
 
     constructor() {
         this.app = express();
         this.config();
-        this.route.routes(this.app);
     }
+
 
     private config(): void {
         this.app.use(express.json());
+        this.app.use(routes);
         this.app.use(errors());
         this.app.use(App.logRequests);
         this.app.use(cors({

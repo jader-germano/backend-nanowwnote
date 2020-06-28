@@ -1,16 +1,14 @@
-import express from 'express';
-import { NotesRoutes } from './notes.routes';
-import { UsersRoutes } from './users.routes';
-import { WorkspacesRoutes } from './workspaces.routes';
+import { Router } from 'express';
+import noteRouter from './notes.routes';
+import usersRouter from './users.routes';
+import workspacesRouter from './workspaces.routes';
+import authenticationRoutes from  './authentications.routes'
 
-export class Routes {
-    private notesRoutes: NotesRoutes = new NotesRoutes();
-    private workspacesRoutes: WorkspacesRoutes = new WorkspacesRoutes();
-    private usersRoutes: UsersRoutes = new UsersRoutes();
+const routes = Router();
 
-    public routes(app: express.Application): void {
-        this.notesRoutes.routes(app);
-        this.workspacesRoutes.routes(app);
-        this.usersRoutes.routes(app);
-    }
-}
+routes.use('/', authenticationRoutes);
+routes.use('/', workspacesRouter);
+routes.use('/', noteRouter);
+routes.use('/', usersRouter);
+
+export default routes;

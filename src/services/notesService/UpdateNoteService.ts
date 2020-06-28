@@ -23,6 +23,7 @@ export default class UpdateNoteService {
         ownerWorkSpace_id,
     }: Request): Promise<Note | null> {
         const noteRepository = getCustomRepository(NotesRepository);
+
         const note = await noteRepository.create({
             id,
             title,
@@ -30,6 +31,7 @@ export default class UpdateNoteService {
             owner_id,
             ownerWorkSpace_id,
         });
+
         return await noteRepository.saveNote(note);
     }
 }

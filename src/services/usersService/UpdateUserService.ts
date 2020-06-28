@@ -20,6 +20,7 @@ export default class CreateUsersService {
         password,
     }: Request): Promise<User | null> {
         const usersRepository = getCustomRepository(UsersRepository);
+
         let checkUsersExists = await usersRepository.find({
             where: { id, email },
         });
@@ -27,6 +28,7 @@ export default class CreateUsersService {
         if (checkUsersExists.length > 1) {
             throw Error('Email address already in use.');
         }
+
         const user = usersRepository.create({
             id,
             name,
