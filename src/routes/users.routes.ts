@@ -15,7 +15,6 @@ usersRouter
     .route('/')
     .get(async (request: Request, response: Response) => {
         const workspaceRepository = getCustomRepository(UsersRepository);
-        const { page } = request.query;
 
         const users = await workspaceRepository.findAllUsers();
 
