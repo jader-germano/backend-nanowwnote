@@ -17,7 +17,7 @@ usersRouter
         const workspaceRepository = getCustomRepository(UsersRepository);
         const { page } = request.query;
 
-        const users = await workspaceRepository.findAllUsers(Number(page));
+        const users = await workspaceRepository.findAllUsers();
 
         return response.json(users);
     })
