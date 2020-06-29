@@ -12,11 +12,7 @@ noteRouter.use(ensureAuthenticated);
 noteRouter
     .route('/')
     .get(async (request: Request, response: Response) => {
-        const { page } = request.query;
-
-        const notes = await getCustomRepository(NotesRepository).findAllNotes(
-            Number(page),
-        );
+        const notes = await getCustomRepository(NotesRepository).findAllNotes();
 
         return response.json(notes);
     })
