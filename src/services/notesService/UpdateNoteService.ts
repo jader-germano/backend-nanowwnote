@@ -21,7 +21,7 @@ export default class UpdateNoteService {
         description,
         owner_id,
         ownerWorkSpace_id,
-    }: Request): Promise<Note | null> {
+    }: Request): Promise<Note> {
         const noteRepository = getCustomRepository(NotesRepository);
 
         let note = await noteRepository.create({

@@ -53,15 +53,18 @@ class App {
     }
 
     private static logRequests(
+        _: Error,
         request: Request,
-        response: Response,
+        __: Response,
         next: NextFunction,
     ) {
         const { method, url } = request;
 
         const logLabel = `[${method.toUpperCase()} ${url}]`;
+        // eslint-disable-next-line no-console
         console.time(logLabel);
         next();
+        // eslint-disable-next-line no-console
         console.timeEnd(logLabel);
     }
 }

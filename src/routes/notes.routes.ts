@@ -51,8 +51,7 @@ noteRouter
             ownerWorkSpace_id,
         });
 
-        if (updateNote === null)
-            return response.json({ message: 'No match found.' });
+        if (!updateNote) return response.json({ message: 'No match found.' });
 
         return response.json(updateNote);
     });

@@ -8,10 +8,7 @@ interface Request {
 }
 
 export default class CreateWorkspaceService {
-    public async execute({
-        title,
-        owner_id,
-    }: Request): Promise<Workspace | null> {
+    public async execute({ title, owner_id }: Request): Promise<Workspace> {
         const workspaceRepository = getCustomRepository(WorkspacesRepository);
         let workspace = workspaceRepository.create({
             title,

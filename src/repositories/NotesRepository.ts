@@ -9,14 +9,7 @@ export default class NotesRepository extends Repository<Note> {
         return note;
     }
 
-    public async findNoteByDate(id: string): Promise<Note | undefined> {
-        const findNote = await this.findOne({
-            where: { id },
-        });
-        return findNote;
-    }
-
-    public async findNoteById(id: string) {
+    public async findNoteById(id: string): Promise<Note | undefined> {
         const note = await this.findOne({
             where: { id },
         });
