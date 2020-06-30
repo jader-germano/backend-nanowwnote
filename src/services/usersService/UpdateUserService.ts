@@ -19,7 +19,7 @@ export default class CreateUsersService {
         name,
         email,
         password,
-    }: Request): Promise<User | null> {
+    }: Request): Promise<User> {
         const usersRepository = getCustomRepository(UsersRepository);
 
         const checkUsersExists = await usersRepository.find({
