@@ -4,7 +4,7 @@ import AuthenticateUserService from '../services/AuthenticateUserService';
 const authenticationRouter = Router();
 
 authenticationRouter
-    .route('/')
+    .route('/authenticate')
     .post(async (request: Request, response: Response) => {
         const { email, password } = request.body;
 

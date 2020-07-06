@@ -79,6 +79,7 @@ usersRouter
         };
         return response.json(removedStatus);
     });
+
 usersRouter
     .route('/avatar')
     .patch(

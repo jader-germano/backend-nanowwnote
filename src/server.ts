@@ -2,11 +2,12 @@ import 'reflect-metadata';
 import https from 'https';
 import fs from 'fs';
 import app from './app';
-import './database';
+import createConnection from './database';
+
+createConnection();
 
 const PORT = 3335;
 const httpOptions = {
-    hostname: 'www.localhost',
     rejectUnauthorized: false,
     cert: fs.readFileSync('src/config/localhost.crt'),
     key: fs.readFileSync('src/config/localhost.key'),

@@ -3,8 +3,8 @@ import cors from 'cors';
 import express, { NextFunction, Request, Response } from 'express';
 import 'express-async-errors';
 
-import upload from './config/upload';
 import AppError from './errors/AppError';
+import upload from './config/upload';
 import routes from './routes/routes';
 
 class App {
@@ -17,16 +17,11 @@ class App {
 
     private config(): void {
         this.app.use(express.json());
-        this.app.use('/files', express.static(upload.directory));
+        this.app.use(cors());
         this.app.use(routes);
         this.app.use(errors());
         this.app.use(App.logRequests);
-        this.app.use(
-            cors({
-                // TODO: define cors origin when domain gets done
-                origin: 'www.localhost',
-            }),
-        );
+        this.app.use('/files', express.static(upload.directory));
         this.errHandling();
     }
 
@@ -46,20 +41,21 @@ class App {
                 }
                 return response.status(500).json({
                     status: 'error',
-                    message: 'Internal server error',
+                    message: `Internal server error. Details: ${err}`,
                 });
             },
         );
     }
 
     private static logRequests(
-        _: Error,
+        error: Error,
         request: Request,
-        __: Response,
+        _: Response,
         next: NextFunction,
     ) {
         const { method, url } = request;
-
+        // eslint-disable-next-line no-console
+        console.log(error);
         const logLabel = `[${method.toUpperCase()} ${url}]`;
         // eslint-disable-next-line no-console
         console.time(logLabel);
