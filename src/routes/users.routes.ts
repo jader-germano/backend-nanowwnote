@@ -13,7 +13,7 @@ const usersRouter = Router();
 const upload = multer(uploadConfig);
 usersRouter
     .route('/')
-    .get(async (request: Request, response: Response) => {
+    .get(ensureAuthenticated, async (request: Request, response: Response) => {
         const workspaceRepository = getCustomRepository(UsersRepository);
 
         const users = await workspaceRepository.findAllUsers();
@@ -35,7 +35,7 @@ usersRouter
         return response.json(user);
     })
 
-    .put(async (request: Request, response: Response) => {
+    .put(ensureAuthenticated, async (request: Request, response: Response) => {
         const updateUsersService = new UpdateUsersService();
 
         const { id, name, email, password } = request.body;
@@ -54,7 +54,7 @@ usersRouter
 
 usersRouter
     .route('/:id')
-    .get(async (request: Request, response: Response) => {
+    .get(ensureAuthenticated, async (request: Request, response: Response) => {
         const workspaceRepository = getCustomRepository(UsersRepository);
 
         const { id } = request.params;
