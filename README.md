@@ -43,7 +43,7 @@ yarn test
 
 ## 🤝 Contributing
 
-Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/jader-germano/backend-nanowwnote/issues). 
+Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/jader-germano/backend-nanowwnote/issues).
 
 ## Show your support
 
