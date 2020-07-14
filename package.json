@@ -7,7 +7,7 @@
     "license": "MIT",
     "scripts": {
         "build": "tsc",
-        "dev": "ts-node-dev --transpileOnly --ignore-watch node_modules src/server.ts",
+        "dev:server": "ts-node-dev --transpileOnly --ignore-watch node_modules src/server.ts",
         "start": "tsc && nodemon ./dist/server.js",
         "prod": "npm run build && npm run start",
         "test": "jest",

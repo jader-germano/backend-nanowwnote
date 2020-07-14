@@ -2,8 +2,8 @@ import { errors } from 'celebrate';
 import cors from 'cors';
 import express, { NextFunction, Request, Response } from 'express';
 import 'express-async-errors';
-
 import upload from './config/upload';
+
 import AppError from './errors/AppError';
 import routes from './routes/routes';
 
@@ -17,17 +17,12 @@ class App {
 
     private config(): void {
         this.app.use(express.json());
-        this.app.use('/files', express.static(upload.directory));
+        this.app.use(cors());
         this.app.use(routes);
         this.app.use(errors());
-        this.app.use(App.logRequests);
-        this.app.use(
-            cors({
-                // TODO: define cors origin when domain gets done
-                origin: 'www.localhost',
-            }),
-        );
+        this.app.use('/files', express.static(upload.directory));
         this.errHandling();
+        this.logRequests();
     }
 
     private errHandling(): void {
@@ -46,26 +41,36 @@ class App {
                 }
                 return response.status(500).json({
                     status: 'error',
-                    message: 'Internal server error',
+                    message: `Internal server error. Details: ${err.message}`,
                 });
             },
         );
     }
 
-    private static logRequests(
-        _: Error,
-        request: Request,
-        __: Response,
-        next: NextFunction,
-    ) {
-        const { method, url } = request;
+    private logRequests(): void {
+        this.app.use(
+            (
+                error: Error,
+                request: Request,
+                _: Response,
+                next: NextFunction,
+            ) => {
+                const { method, url } = request;
 
-        const logLabel = `[${method.toUpperCase()} ${url}]`;
-        // eslint-disable-next-line no-console
-        console.time(logLabel);
-        next();
-        // eslint-disable-next-line no-console
-        console.timeEnd(logLabel);
+                // eslint-disable-next-line no-console
+                console.log(error);
+
+                const logLabel = `[${method.toUpperCase()} ${url}]`;
+
+                // eslint-disable-next-line no-console
+                console.time(logLabel);
+
+                next();
+
+                // eslint-disable-next-line no-console
+                console.timeEnd(logLabel);
+            },
+        );
     }
 }
 
